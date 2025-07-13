@@ -54,4 +54,4 @@ This project is a CRUD (Create, Read, Update, Delete) application built using La
 Contributions are welcome! Please fork the repository and submit a pull request.
 
 ## License
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).# MY-LARAVEL-REACT_APP
