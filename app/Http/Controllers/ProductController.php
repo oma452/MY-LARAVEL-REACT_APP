@@ -33,7 +33,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
             'description' => 'nullable|string',
-            'category' => 'nullable|string|max:255', // ✅ added category validation
+            'category' => 'nullable|string|max:255', 
         ]);
 
         Product::create($request->only(['name', 'price', 'description', 'category']));
