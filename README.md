@@ -1,156 +1,131 @@
-# Laravel React Product Management App
+# MY-LARAVEL-REACT_APP
 
-A full-stack product management application built with Laravel and React. The project uses Inertia.js to connect the Laravel backend with a TypeScript React frontend and provides authenticated users with product CRUD workflows, search, and category filtering.
+A full-stack product management app built with **Laravel 12** and **React 19 + TypeScript**, connected through **Inertia.js**.
 
 ## Features
 
-- User authentication and an authenticated dashboard.
-- Create, view, update, and delete products.
-- Search products by name.
-- Filter products by category.
-- Product fields for name, price, description, and category.
-- Server-side validation for product forms.
-- React pages rendered through Inertia.js.
-- Vite development tooling with Tailwind CSS.
-- Server-side rendering configuration for the React entry point.
+- Authentication flow with protected dashboard and product pages
+- Product create, list, edit, update, and delete workflows
+- Product search by name and category filtering
+- Validation for product create/update requests
+- Inertia-powered Laravel + React page rendering
 
 ## Tech Stack
 
-| Area | Technology |
+| Layer | Technologies |
 | --- | --- |
-| Backend | PHP 8.2+, Laravel 12 |
-| Frontend | React 19, TypeScript |
-| Application bridge | Inertia.js |
-| Styling | Tailwind CSS 4 |
-| Build tool | Vite 6 |
-| Database | SQLite by default; other Laravel-supported databases can be configured |
-| Testing | PestPHP |
+| Backend | PHP ^8.2, Laravel ^12 |
+| Frontend | React ^19, TypeScript |
+| Bridge | Inertia.js (`inertiajs/inertia-laravel`, `@inertiajs/react`) |
+| Styling | Tailwind CSS ^4 |
+| Tooling | Vite ^6, ESLint, Prettier |
+| Testing | Pest + Laravel testing tools |
+| Default DB | SQLite (`.env.example` uses `DB_CONNECTION=sqlite`) |
 
 ## Project Structure
 
 ```text
-app/                 Laravel application code, controllers, and models
-bootstrap/            Laravel framework bootstrap files
-config/               Application configuration
-database/             Migrations, factories, seeders, and local database files
-public/               Public entry point and generated assets
-resources/css/        Application styles
-resources/js/         React, TypeScript, pages, components, layouts, and types
-resources/views/      Blade view templates
-routes/               Web, authentication, and settings routes
-storage/              Logs, cache, and generated application files
-tests/                Automated tests
+app/                 Application controllers, models, and core Laravel code
+database/            Migrations, factories, seeders
+resources/js/        React + TypeScript frontend (pages, layouts, components)
+resources/views/     Blade templates
+routes/              Web/auth/settings route files
+tests/               Feature and unit tests
 ```
 
-## Requirements
+## Prerequisites
 
-- PHP 8.2 or later
+- PHP 8.2+
 - Composer
-- Node.js and npm
-- SQLite, or another database supported by Laravel
+- Node.js + npm
+- SQLite (default) or another Laravel-supported database
 
-## Installation
+## Installation & Setup
 
-1. Clone the repository and enter the project directory:
+```bash
+git clone https://github.com/oma452/MY-LARAVEL-REACT_APP.git
+cd MY-LARAVEL-REACT_APP
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate
+```
 
-   ```bash
-   git clone https://github.com/oma452/MY-LARAVEL-REACT_APP.git
-   cd MY-LARAVEL-REACT_APP
-   ```
+> If you use MySQL/PostgreSQL instead of SQLite, update your `.env` DB settings before running migrations.
 
-2. Install PHP dependencies:
+## Environment Configuration
 
-   ```bash
-   composer install
-   ```
+The base environment template is in `.env.example`. Key values:
 
-3. Create the local environment file and application key:
+- `APP_NAME` and `VITE_APP_NAME="${APP_NAME}"`
+- `APP_URL`
+- `DB_CONNECTION` (defaults to `sqlite`)
 
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
+## Run the App
 
-4. Install JavaScript dependencies:
+### Full local development stack (recommended)
 
-   ```bash
-   npm install
-   ```
-
-5. Review `.env` and configure the database if needed. The example configuration uses SQLite by default. Run the migrations:
-
-   ```bash
-   php artisan migrate
-   ```
-
-## Running the Application
-
-The repository includes a Composer development script that starts the Laravel server, queue listener, and Vite development server together:
+Runs Laravel server, queue listener, and Vite together:
 
 ```bash
 composer run dev
 ```
 
-Open the application at [http://localhost:8000](http://localhost:8000).
+### SSR development flow
 
-To run the frontend development server separately, use:
+```bash
+composer run dev:ssr
+```
+
+### Frontend-only development server
 
 ```bash
 npm run dev
 ```
 
-To create a production frontend build, use:
+## Build & Quality Commands
 
 ```bash
+# Production builds
 npm run build
-```
+npm run build:ssr
 
-## Application Routes
-
-The product workflows are defined in `routes/web.php` and are protected by the `auth` and `verified` middleware:
-
-| Method | Route | Purpose |
-| --- | --- | --- |
-| `GET` | `/products` | List products, with optional name search and category filtering |
-| `GET` | `/products/create` | Display the product creation form |
-| `POST` | `/products` | Create a product |
-| `GET` | `/products/{product}/edit` | Display the product editing form |
-| `PUT` | `/products/{product}` | Update a product |
-| `DELETE` | `/products/{product}` | Delete a product |
-
-This project does not currently expose a separate `routes/api.php` API surface; the product interface uses Laravel web routes and Inertia responses.
-
-## Environment Variables
-
-Copy `.env.example` to `.env` before running the application. Important values include:
-
-- `APP_URL` — local application URL.
-- `DB_CONNECTION` — database driver; the default is `sqlite`.
-- `VITE_APP_NAME` — frontend application name exposed through Vite.
-
-Do not commit `.env` or other files containing secrets.
-
-## Quality Checks
-
-Available project scripts include:
-
-```bash
-npm run types
+# Code quality
 npm run lint
+npm run types
 npm run format:check
-```
+npm run format
 
-Laravel tests can be run with:
-
-```bash
+# Backend tests
 php artisan test
 ```
 
+## Web Routes (Product Area)
+
+Defined in `routes/web.php` under `auth` + `verified` middleware:
+
+| Method | URI | Route name |
+| --- | --- | --- |
+| GET | `/products` | `products.index` |
+| GET | `/products/create` | `products.create` |
+| POST | `/products` | `products.store` |
+| GET | `/products/{product}/edit` | `products.edit` |
+| PUT | `/products/{product}` | `products.update` |
+| DELETE | `/products/{product}` | `products.destroy` |
+
+Additional web entry points:
+
+- `GET /` → `home`
+- `GET /dashboard` → `dashboard` (authenticated + verified)
+
+This repository currently uses web routes and Inertia pages; it does **not** define a `routes/api.php` API surface.
+
 ## Potential Future Improvements
 
-- Add more automated coverage for product CRUD, filtering, and authentication flows.
-- Add screenshots or a short demo once representative application screens are available.
-- Add deployment instructions for the intended hosting environment.
+- Expand automated feature tests for product workflows
+- Add UI screenshots after image assets are intentionally captured and committed
 
 ## Author
 
